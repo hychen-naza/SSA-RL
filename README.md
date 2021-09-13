@@ -41,6 +41,7 @@ This module depends upon a knowledge of [Markdown]().
 ## Usage
 
 ```
+python test_one.py --display none --explore rnd --no-qp --no-ssa-buffer
 ```
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
