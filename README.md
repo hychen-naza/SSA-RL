@@ -12,26 +12,32 @@ This is an example file with maximal choices selected.
 This is a long description.
 
 ## Table of Contents
-
-- [Security](#security)
-- [Background](#background)
+- [Introduction](#Introduction)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Security
 
-### Any optional sections
+## Introduction
+We provide code for evaluate the safety and sample-efficiency of our proposed RL framework.
 
-## Background
+For safety, we use Safe Set Algorithm (SSA). 
+For efficiency, there are more strategies you can choose:
+1, Adapting SSA
+2, Exploration (PSN, RND, None)
+3, Learning from SSA
 
+We also provide visual tools.
+![passive_results](docs/images/passive_results.jpg)
+
+We also provide visual comparison tools.
+
+![visual_comparison](docs/images/visual_comparison.jpg)
 ### Any optional sections
 
 ## Install
-
-This module depends upon a knowledge of [Markdown]().
 
 ```
 ```
