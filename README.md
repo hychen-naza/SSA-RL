@@ -34,8 +34,8 @@ The safety and efficiency results of all models are shown below
 ![efficiency_result](docs/efficiency_result.png)
 
 We also provide visual tools.
-![visulization](docs/visulization.png)
-### Any optional sections
+![visulization](docs/visualization.png)
+
 
 ## Install
 
@@ -47,7 +47,7 @@ We also provide visual tools.
 ## Usage
 
 ```
-python test_one.py --display none --explore rnd --no-qp --no-ssa-buffer
+python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --no-ssa-buffer
 ```
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
