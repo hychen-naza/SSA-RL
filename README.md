@@ -30,11 +30,11 @@ For efficiency, there are more strategies you can choose:
 3, Learning from SSA
 
 The safety and efficiency results of all models are shown below
-![safety_result](docs/safety_result.jpg)
-![efficiency_result](docs/efficiency_result.jpg)
+![safety_result](docs/safety_result.png)
+![efficiency_result](docs/efficiency_result.png)
 
 We also provide visual tools.
-![visulization](docs/visulization.jpg)
+![visulization](docs/visulization.png)
 ### Any optional sections
 
 ## Install
