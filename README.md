@@ -8,11 +8,11 @@
 ## Introduction
 We provide code for evaluate the safety and sample-efficiency of our proposed RL framework.
 
-For safety, we use Safe Set Algorithm (SSA). 
-For efficiency, there are more strategies you can choose:
-1, Adapting SSA
-2, Exploration (PSN, RND, None)
-3, Learning from SSA
+For safety, we use Safe Set Algorithm (SSA).   
+For efficiency, there are more strategies you can choose:  
+1, Adapting SSA;  
+2, Exploration (PSN, RND, None);  
+3, Learning from SSA;  
 
 The safety and efficiency results of all models are shown below
 ![safety_result](docs/safety_result.png)
