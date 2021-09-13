@@ -1,24 +1,9 @@
 # Safe-and-Sample-efficient-Reinforcement-Learning-for-Clustered-Dynamic-Uncertain-Environments
 
-![banner]()
-
-![badge]()
-![badge]()
-[![license](https://img.shields.io/github/license/:user/:repo.svg)](LICENSE)
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-
-This is an example file with maximal choices selected.
-
-This is a long description.
-
 ## Table of Contents
 - [Introduction](#Introduction)
 - [Install](#install)
 - [Usage](#usage)
-- [API](#api)
-- [Contributing](#contributing)
-- [License](#license)
-
 
 ## Introduction
 We provide code for evaluate the safety and sample-efficiency of our proposed RL framework.
