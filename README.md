@@ -40,36 +40,21 @@ We also provide visual tools.
 ## Install
 
 ```
+conda create -n safe-rl
+conda install python=3.7.9
+pip install tensorflow
+pip install keras
+pip install matplotlib
+pip install gym
+pip install cvxopt
 ```
-
-### Any optional sections
 
 ## Usage
 
 ```
 python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --no-ssa-buffer
+python test_one.py --display {none, turtle} --explore {none, psn, rnd} --qp --no-ssa-buffer
+python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --ssa-buffer
 ```
 
-Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
 
-### Any optional sections
-
-## API
-
-### Any optional sections
-
-## More optional sections
-
-## Contributing
-
-See [the contributing file](CONTRIBUTING.md)!
-
-PRs accepted.
-
-Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
-
-### Any optional sections
-
-## License
-
-[MIT © Richard McRichface.](../LICENSE)
