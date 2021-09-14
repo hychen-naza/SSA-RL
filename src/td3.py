@@ -1,9 +1,6 @@
 '''
     Implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3)
-    Paper: https://arxiv.org/abs/1802.09477
-    Adopted from author's PyTorch Implementation
 '''
-# pylint: disable=C0103, R0913, R0901, W0221, R0902, R0914
 import copy
 import numpy as np
 import tensorflow as tf
@@ -81,13 +78,7 @@ class Critic(keras.Model):
     
 class TD3():
     '''
-        The TD3 main class. Wraps around both the actor and critic, and provides
-        three public methods:
-        train_on_batch, which trains both the actor and critic on a batch of
-        transitions
-        select_action, which outputs the action by actor given a single state
-        select_action_batch, which outputs the actions by actor given a batch
-        of states.
+        The TD3 main class. 
     '''
     def __init__(
         self,
@@ -99,7 +90,8 @@ class TD3():
         tau=0.005,
         policy_noise=0.2,
         noise_clip=0.5,
-        policy_freq=2
+        policy_freq=2,
+        exploration = None
     ):
         self.max_acc = max_acc
         self.max_steering = max_acc
@@ -123,6 +115,8 @@ class TD3():
         self.total_it = 0
         self.loss = keras.losses.MeanSquaredError()
 
+        self.exploration = exploration
+
     def select_action(self, state):
         '''
             Select action for a single state.
@@ -133,8 +127,10 @@ class TD3():
         state = tf.cast(state, tf.float32) 
         acc_expl_noise = np.random.normal(0, self.max_acc * self.expl_noise)
         steering_expl_noise = np.random.normal(0, self.max_acc * self.expl_noise)
-        expl_action = self.actor(state).numpy().flatten() + np.array([acc_expl_noise, steering_expl_noise])
-        #expl_action = self.expl_policy_actor(state).numpy().flatten() + np.array([acc_expl_noise, steering_expl_noise])
+        if (self.exploration == "psn"):
+            expl_action = self.expl_policy_actor(state).numpy().flatten() + np.array([acc_expl_noise, steering_expl_noise])
+        else:
+            expl_action = self.actor(state).numpy().flatten() + np.array([acc_expl_noise, steering_expl_noise])
         expl_action[0] = max(min(expl_action[0], self.max_acc), -self.max_acc)
         expl_action[1] = max(min(expl_action[1], self.max_acc), -self.max_acc)
         return expl_action
@@ -169,8 +165,6 @@ class TD3():
             not_done: tf tensor, size (batch_size, 1)
             You need to implement part of this function.
         '''
-
-
         # Select action according to policy and add clipped noise
         noise = tf.clip_by_value(tf.random.normal(action.shape) * self.policy_noise,
                                  -self.noise_clip, self.noise_clip)

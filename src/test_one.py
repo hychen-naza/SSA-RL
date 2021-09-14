@@ -119,7 +119,7 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
     env = simu_env.Env(display, fake_env, **(env_params))
 
     policy_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = craft_action_size, max_size=int(1e6))
-    policy = TD3(state_dim, craft_action_size, env.max_acc, env.max_acc)
+    policy = TD3(state_dim, craft_action_size, env.max_acc, env.max_acc, exploration = exploration)
     ssa_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = craft_action_size, max_size=int(1e6))
     # ssa
     safe_controller = SafeSetAlgorithm(max_speed = env.craft_state.max_speed, fake_env = fake_env, is_qp = qp)
