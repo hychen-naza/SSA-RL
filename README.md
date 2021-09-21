@@ -41,5 +41,11 @@ python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp -
 python test_one.py --display {none, turtle} --explore {none, psn, rnd} --qp --no-ssa-buffer
 python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --ssa-buffer
 ```
+- `--display` can be either `none` or `turtle` (visulization).
+- `--explore` specifies the exploration strategy that the robot uses. 
+- `--no-qp` means that we use vanilla SSA.
+- `--qp` means that we use adapted SSA.
+- `--no-ssa-buffer` means that we use the default learning.
+- `--ssa-buffer` means that we use the safe learning from SSA demonstrations.
 
 
