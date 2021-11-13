@@ -15,21 +15,18 @@ params = {
     "noise_sigma": 0.03, 
     "min_dist": 0.03, 
     "asteroid_b_max": 0.01, 
-    "craft_angle_increment": 0.39269908169872414, 
-    "craft_max_speed": 0.03, 
+    "robot_max_speed": 0.03, 
     "t_step": 2, 
     "asteroid_a_max": 0.0001, 
     "t_future": 1000, 
     "t_past": -100
   }, 
-  "initial_craft_state": {
+  "initial_robot_state": {
     "x": 0.0, 
-    "max_speed": 0.02, 
-    "speed_increment": 0.01, 
-    "v": 0.01, 
     "y": -1.0, 
-    "h": 1.5707963267948966, 
-    "angle_increment": 0.39269908169872414
+    "vx": 0, 
+    "vy": 0, 
+    "max_speed": 0.02
   }, 
   "goal_bounds": {
     "x_bounds": [

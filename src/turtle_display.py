@@ -25,9 +25,9 @@ class TurtleRunnerDisplay( runner.BaseRunnerDisplay ):
         self.height = height
         self.x_bounds = (0.0,1.0)
         self.y_bounds = (0.0,1.0)
-        self.asteroid_turtles = {}
-        self.estimated_asteroid_turtles = {}
-        self.craft_turtle = None
+        self.obstacle_turtles = {}
+        self.estimated_obstacle_turtles = {}
+        self.robot_turtle = None
 
     def setup(self, x_bounds, y_bounds,
               in_bounds, goal_bounds,
@@ -52,10 +52,10 @@ class TurtleRunnerDisplay( runner.BaseRunnerDisplay ):
         self._draw_goal(goal_bounds)
         self._draw_inbounds(in_bounds)
 
-        self.craft_turtle = turtle.Turtle()
-        self.craft_turtle.shape("triangle")
-        self.craft_turtle.shapesize(0.3, 0.5)
-        self.craft_turtle.penup()
+        self.robot_turtle = turtle.Turtle()
+        self.robot_turtle.shape("triangle")
+        self.robot_turtle.shapesize(0.3, 0.5)
+        self.robot_turtle.penup()
 
     def _draw_inbounds(self, in_bounds):
         t = turtle.Turtle()
@@ -85,62 +85,62 @@ class TurtleRunnerDisplay( runner.BaseRunnerDisplay ):
         t.end_fill()
         
     def begin_time_step(self, t):
-        for idx,trtl in list(self.asteroid_turtles.items()):
+        for idx,trtl in list(self.obstacle_turtles.items()):
             trtl.clear()
             trtl.hideturtle()
-        for idx,trtl in list(self.estimated_asteroid_turtles.items()):
+        for idx,trtl in list(self.estimated_obstacle_turtles.items()):
             trtl.clear()
             trtl.hideturtle()
-        self.craft_turtle.clear()
-        self.craft_turtle.hideturtle()
+        self.robot_turtle.clear()
+        self.robot_turtle.hideturtle()
 
-    def asteroid_at_loc(self, i, x, y, nearest_obstacle = False, close_obstacle = False):
-        if i not in self.asteroid_turtles:
+    def obstacle_at_loc(self, i, x, y, nearest_obstacle = False, close_obstacle = False):
+        if i not in self.obstacle_turtles:
             trtl = turtle.Turtle()
             trtl.shape("circle")
             trtl.color("grey")
             trtl.shapesize(self.margin * 20, self.margin * 20)
             trtl.penup()
-            self.asteroid_turtles[i] = trtl
-        self.asteroid_turtles[i].setposition(x,y)
-        self.asteroid_turtles[i].color('grey')
-        #Uncomment the following line to display asteroid IDs
-        #self.asteroid_turtles[i]._write(str(i), 'center', 'arial')
-        self.asteroid_turtles[i].showturtle()
+            self.obstacle_turtles[i] = trtl
+        self.obstacle_turtles[i].setposition(x,y)
+        self.obstacle_turtles[i].color('grey')
+        #Uncomment the following line to display obstacle IDs
+        #self.obstacle_turtles[i]._write(str(i), 'center', 'arial')
+        self.obstacle_turtles[i].showturtle()
 
-    def asteroid_set_color(self, i, color = 'grey'):
-        self.asteroid_turtles[i].color(color)
+    def obstacle_set_color(self, i, color = 'grey'):
+        self.obstacle_turtles[i].color(color)
 
-    def asteroid_estimated_at_loc(self, i, x, y, is_match=False):
+    def obstacle_estimated_at_loc(self, i, x, y, is_match=False):
         return
-        if i not in self.estimated_asteroid_turtles:
+        if i not in self.estimated_obstacle_turtles:
             trtl = turtle.Turtle()
             trtl.shape("circle")
             trtl.color("#88ff88" if is_match else "#aa4444")
             trtl.shapesize(0.2,0.2)
             trtl.penup()
-            self.estimated_asteroid_turtles[i] = trtl
-        self.estimated_asteroid_turtles[i].color("#88ff88" if is_match else "#aa4444")
-        self.estimated_asteroid_turtles[i].setposition(x,y)
-        self.estimated_asteroid_turtles[i].showturtle()
+            self.estimated_obstacle_turtles[i] = trtl
+        self.estimated_obstacle_turtles[i].color("#88ff88" if is_match else "#aa4444")
+        self.estimated_obstacle_turtles[i].setposition(x,y)
+        self.estimated_obstacle_turtles[i].showturtle()
 
-    def craft_at_loc(self, x, y, h, is_ssa = False):
-        self.craft_turtle.setposition(x,y)
-        self.craft_turtle.settiltangle( old_div(h * 180, math.pi) )
-        self.craft_turtle.color("red" if is_ssa else "black")
-        self.craft_turtle.showturtle()
+    def robot_at_loc(self, x, y, h, is_ssa = False):
+        self.robot_turtle.setposition(x,y)
+        self.robot_turtle.settiltangle( old_div(h * 180, math.pi) )
+        self.robot_turtle.color("red" if is_ssa else "black")
+        self.robot_turtle.showturtle()
 
     def collision(self):
-        self._explode_craft()
+        self._explode_robot()
 
     def out_of_bounds(self):
-        self._explode_craft()
+        self._explode_robot()
 
     def navigation_done(self, retcode, t):
         if retcode in (runner.NAV_FAILURE_COLLISION,
                        runner.NAV_FAILURE_OUT_OF_BOUNDS,
                        runner.FAILURE_TOO_MANY_STEPS):
-            self._explode_craft()
+            self._explode_robot()
 
     def end_time_step(self, t):
         turtle.update()
@@ -149,8 +149,8 @@ class TurtleRunnerDisplay( runner.BaseRunnerDisplay ):
     def teardown(self):
         turtle.done()
 
-    def _explode_craft(self):
-        self.craft_turtle.shape("circle")
-        self.craft_turtle.shapesize(1.0,1.0)
-        self.craft_turtle.color("orange")
+    def _explode_robot(self):
+        self.robot_turtle.shape("circle")
+        self.robot_turtle.shapesize(1.0,1.0)
+        self.robot_turtle.color("orange")
 

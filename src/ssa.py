@@ -5,7 +5,7 @@ import sys
 import collections
 
 class SafeSetAlgorithm():
-    def __init__(self, max_speed, fake_env = None, is_qp = False, dmin = 0.12, k = 1, max_acc = 0.04, max_steering = np.pi/2):
+    def __init__(self, max_speed, is_qp = False, dmin = 0.12, k = 1, max_acc = 0.04):
         """
         Args:
             dmin: dmin for phi
@@ -15,9 +15,7 @@ class SafeSetAlgorithm():
         self.k = k
         self.max_speed = max_speed
         self.max_acc = max_acc
-        self.max_steering = max_acc
         self.forecast_step = 3
-        self.fake_env = fake_env
         self.records = collections.deque(maxlen = 10)
         self.acc_reward_normal_ssa = 0
         self.acc_reward_qp_ssa = 0
@@ -150,6 +148,80 @@ class SafeSetAlgorithm():
         record_data['control'] = u[0]
         self.records.append(record_data)     
         return u[0], False, False, danger_obs
+
+
+
+    def plot_control_subspace(self, robot_state, obs_states, f, g, u0):
+        """
+        Args:
+            robot_state <x, y, vx, vy>
+            obs_state: np array closest static obstacle state <x, y, vx, vy, ax, ay>
+        """
+        u0 = np.array(u0).reshape((2,1))
+        robot_vel = np.linalg.norm(robot_state[-2:])
+        L_gs = []
+        L_fs = []
+        obs_dots = []
+        reference_control_laws = []
+        is_safe = True
+        phis = []
+        danger_indexs = []
+        for i, obs_state in enumerate(obs_states):
+            d = np.array(robot_state - obs_state[:4])
+            d_pos = d[:2] # pos distance
+            d_vel = d[2:] # vel 
+            d_abs = np.linalg.norm(d_pos)
+            d_dot = self.k * (d_pos @ d_vel.T) / np.linalg.norm(d_pos)
+            phi = np.power(self.dmin, 2) - np.power(np.linalg.norm(d_pos), 2) - d_dot
+            
+            # calculate Lie derivative
+            # p d to p robot state and p obstacle state
+            p_d_p_robot_state = np.hstack([np.eye(2), np.zeros((2,2))]) # shape (2, 4)
+            p_d_p_obs_state = np.hstack([-1*np.eye(2), np.zeros((2,2))]) # shape (2, 4)
+            p_d_pos_p_d = np.array([d_pos[0], d_pos[1]]).reshape((1,2)) / d_abs # shape (1, 2)
+            p_d_pos_p_robot_state = p_d_pos_p_d @ p_d_p_robot_state # shape (1, 4)
+            p_d_pos_p_obs_state = p_d_pos_p_d @ p_d_p_obs_state # shape (1, 4)
+
+            # p d_dot to p robot state and p obstacle state
+            p_vel_p_robot_state = np.hstack([np.zeros((2,2)), np.eye(2)]) # shape (2, 4)
+            p_vel_p_obs_state = np.hstack([np.zeros((2,2)), -1*np.eye(2)]) # shape (2, 4)
+            p_d_dot_p_vel = d_pos.reshape((1,2)) / d_abs # shape (1, 2)
+            
+            p_pos_p_robot_state = np.hstack([np.eye(2), np.zeros((2,2))]) # shape (2, 4)
+            p_pos_p_obs_state = np.hstack([-1*np.eye(2), np.zeros((2,2))]) # shape (2, 4)
+            p_d_dot_p_pos = d_vel / d_abs - 0.5 * (d_pos @ d_vel.T) * d_pos / np.power(d_abs, 3) 
+            p_d_dot_p_pos = p_d_dot_p_pos.reshape((1,2)) # shape (1, 2)
+
+            p_d_dot_p_robot_state = p_d_dot_p_pos @ p_pos_p_robot_state + p_d_dot_p_vel @ p_vel_p_robot_state # shape (1, 4)
+            p_d_dot_p_obs_state = p_d_dot_p_pos @ p_pos_p_obs_state + p_d_dot_p_vel @ p_vel_p_obs_state # shape (1, 4)
+
+            p_phi_p_robot_state = -2 * np.linalg.norm(d_pos) * p_d_pos_p_robot_state - \
+                            self.k * p_d_dot_p_robot_state # shape (1, 4)
+            p_phi_p_obs_state = -2 * np.linalg.norm(d_pos) * p_d_pos_p_obs_state - \
+                            self.k * p_d_dot_p_obs_state # shape (1, 4)
+        
+            L_f = p_phi_p_robot_state @ (f @ robot_state.reshape((-1,1))) # shape (1, 1)
+            L_g = p_phi_p_robot_state @ g # shape (1, 2) g contains x information
+            obs_dot = p_phi_p_obs_state @ obs_state[-4:]
+            L_fs.append(L_f)
+            phis.append(phi)  
+            obs_dots.append(obs_dot)
+
+            if (phi > 0):
+                L_gs.append(L_g)                                              
+                reference_control_laws.append( -0.5*phi - L_f - obs_dot)
+                is_safe = False
+                danger_indexs.append(i)
+
+        if (not is_safe):
+            u0 = u0.reshape(-1,1)
+            qp_parameter = np.eye(2)
+            for i in range(len(L_gs)):
+                u, _ = self.solve_qp(robot_state, u0, L_gs[i], reference_control_laws[i], [], qp_parameter, [], [])
+                print(u, L_gs[i])
+
+
+
 
     def check_same_direction(self, pcontrol, perpendicular_controls):
         if (len(perpendicular_controls) == 0):

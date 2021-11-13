@@ -30,22 +30,22 @@ class BaseRunnerDisplay(object):
     def begin_time_step(self, t):
         pass
 
-    def asteroid_at_loc(self, i, x, y):
+    def obstacle_at_loc(self, i, x, y):
         pass
 
-    def asteroid_estimated_at_loc(self, i, x, y, is_match=False):
+    def obstacle_estimated_at_loc(self, i, x, y, is_match=False):
         pass
 
-    def asteroid_estimates_compared(self, num_matched, num_total):
+    def obstacle_estimates_compared(self, num_matched, num_total):
         pass
 
-    def asteroid_set_color(self, id, color):
+    def obstacle_set_color(self, id, color):
         pass
 
-    def craft_at_loc(self, x, y, h, is_safe):
+    def robot_at_loc(self, x, y, h, is_safe):
         pass
 
-    def craft_steers(self, dh, dv):
+    def robot_steers(self, dh, dv):
         pass
 
     def collision(self):
