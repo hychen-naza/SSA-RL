@@ -27,7 +27,8 @@ We also provide visual tools.
 ```
 conda create -n safe-rl
 conda install python=3.7.9
-pip install tensorflow
+pip install tensorflow==2.2.1
+pip install future
 pip install keras
 pip install matplotlib
 pip install gym
