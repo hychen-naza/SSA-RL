@@ -4,6 +4,7 @@
 - [Introduction](#Introduction)
 - [Install](#install)
 - [Usage](#usage)
+- [Acknowledgments](#Acknowledgments)
 
 ## Introduction
 We provide code for evaluate the safety and sample-efficiency of our proposed RL framework.
@@ -50,3 +51,5 @@ python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp -
 - `--ssa-buffer` means that we use the safe learning from SSA demonstrations.
 
 
+## Acknowledgments
+Part of the simulation environment code is coming from the course CS 7638: Artificial Intelligence for Robotics in GaTech. We get the permission from the lecturor Jay Summet to use this code for research.
