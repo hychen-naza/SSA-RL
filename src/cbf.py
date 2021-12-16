@@ -1,6 +1,8 @@
 import numpy as np
 import cvxopt
 import sys
+import collections
+
 
 class ControlBarrierFunction():
     def __init__(self, max_speed, dmin = 0.12, k = 1, max_acc = 0.04):
@@ -14,13 +16,14 @@ class ControlBarrierFunction():
         self.max_speed = max_speed
         self.max_acc = max_acc
         self.forecast_step = 3
+        self.records = collections.deque(maxlen = 10)
 
     def get_safe_control(self, robot_state, obs_states, f, g, u0):
         """
         Args:
             robot_state <x, y, vx, vy>
             robot_state: np array current robot state <x, y, vx, vy>
-            obs_state: np array closest static obstacle state <x, y, 0, 0>
+            obs_state: np array closest static obstacle state <x, y, 0, 0> 
             bx: barrier function -- dmin**2 - d**2
         """
         u0 = np.array(u0).reshape((2,1))
@@ -29,7 +32,12 @@ class ControlBarrierFunction():
         obs_dots = []
         reference_control_laws = []
         is_safe = True
-
+        record_data = {}
+        record_data['obs_states'] = [obs[:2] for obs in obs_states]
+        record_data['robot_state'] = robot_state
+        record_data['phi'] = []
+        record_data['phi_dot'] = []
+        record_data['is_multi_obstacles'] = True if len(obs_states) > 1 else False
         for i, obs_state in enumerate(obs_states):
             d = np.array(robot_state - obs_state[:4])
             d_pos = d[:2] # pos distance
@@ -37,7 +45,7 @@ class ControlBarrierFunction():
             d_abs = np.linalg.norm(d_pos)
             d_dot = self.k * (d_pos @ d_vel.T) / np.linalg.norm(d_pos)
             phi = np.power(self.dmin, 2) - np.power(np.linalg.norm(d_pos), 2) - d_dot
-
+            record_data['phi'].append(phi)
             # calculate Lie derivative
             # p d to p robot state and p obstacle state
             p_d_p_robot_state = np.hstack([np.eye(2), np.zeros((2,2))]) # shape (2, 4)
@@ -92,22 +100,20 @@ class ControlBarrierFunction():
             try:
 
                 b = cvxopt.matrix([[cvxopt.matrix(reference_control_laws), S_saturated]])
-                #import pdb
-                #pdb.set_trace()
-                #print(f"Q {Q}, p {p}, A {A}, b {b}")
                 sol = cvxopt.solvers.qp(Q, p, A, b)
                 u = sol["x"]
-                #if (abs(u[0]) > 1e-2 or abs(u[1]) > 1e-2):
-                #    print(u)
                 break
             except ValueError:
-                # no solution, relax the constraint
-                #print(f"relax reference_control_law\n\n\n")
                 for i in range(len(reference_control_laws)):
                     reference_control_laws[i][0] += 0.01
 
         u = np.array([u[0]+u0[0][0], u[1]+u0[1][0]])
         u[0] = max(min(u[0], self.max_acc), -self.max_acc)
         u[1] = max(min(u[1], self.max_acc), -self.max_acc)
+        for i in range(len(L_gs)):
+            phi_dot = L_fs[i] + L_gs[i] @ u + obs_dots[i]
+            record_data['phi_dot'].append(phi_dot)
+        record_data['control'] = u
+        self.records.append(record_data)     
         return u, True
         
