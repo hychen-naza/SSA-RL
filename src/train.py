@@ -27,15 +27,15 @@ from tensorflow import keras
 # project files
 import dynamic_obstacle
 import bounds
-import robot # two integrator robot
+import robot # double integrator robot
 import simu_env
 import runner
 import param
 from turtle_display import TurtleRunnerDisplay
 from utils import ReplayBuffer
 from td3 import TD3
-from pe_model import PE
-from fake_env import FakeEnv
+#from pe_model import PE
+#from fake_env import FakeEnv
 from ssa import SafeSetAlgorithm
 from cautious_rl import ProbabiilisticShield
 from cbf import ControlBarrierFunction
