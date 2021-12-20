@@ -39,9 +39,9 @@ pip install cvxopt
 ## Usage
 
 ```
-python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --no-ssa-buffer
-python test_one.py --display {none, turtle} --explore {none, psn, rnd} --qp --no-ssa-buffer
-python test_one.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --ssa-buffer
+python train.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --no-ssa-buffer
+python train.py --display {none, turtle} --explore {none, psn, rnd} --qp --no-ssa-buffer
+python train.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --ssa-buffer
 ```
 - `--display` can be either `none` or `turtle` (visulization).
 - `--explore` specifies the exploration strategy that the robot uses. 
