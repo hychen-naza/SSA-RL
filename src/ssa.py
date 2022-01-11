@@ -101,25 +101,14 @@ class SafeSetAlgorithm():
                 danger_indexs.append(i)
                 danger_obs.append(obs_state[:2])
                 # constrain_obs.append(obs_state[:2])
-            '''
-            elif (phi <= 0 and self.is_qp):
-                L_gs.append(L_g)
-                reference_control_laws.append(- L_f - obs_dot)
-                warning_indexs.append(i)
-            '''
+
         if (not is_safe):
             # Solve safe optimization problem
             # min_x (1/2 * x^T * Q * x) + (f^T * x)   s.t. Ax <= b
             u0 = u0.reshape(-1,1)
-            # u_normal_ssa, _ = self.solve_qp(robot_state, u0, L_gs, reference_control_laws, [1,1])
-            #u_vanilla, reference_control_laws = self.solve_qp(robot_state, u0, L_gs, reference_control_laws, phis, np.eye(2), danger_indexs, warning_indexs)
             qp_parameter = self.find_qp(robot_state, obs_states, u0.flatten())
             u, reference_control_laws = self.solve_qp(robot_state, u0, L_gs, reference_control_laws, phis, qp_parameter, danger_indexs, warning_indexs)
-            #print(f"u0 {u0}, ssa {u_vanilla}, ssa_qp {u}, robot_state {robot_state}, obs_states {obs_states}")
-            #reward_normal_ssa = robot_state[1] + (robot_state[3] + u_normal_ssa[1]) + 1
             reward_qp_ssa = robot_state[1] + (robot_state[3] + u[1]) + 1
-            #print(f"ssa reward {reward_normal_ssa}, reward_qp_ssa {reward_qp_ssa}, acc ssa {self.acc_reward_normal_ssa}, {self.acc_reward_qp_ssa}")
-            #self.acc_reward_normal_ssa += reward_normal_ssa
             self.acc_reward_qp_ssa += reward_qp_ssa
             
             phi_dots = []
@@ -136,9 +125,6 @@ class SafeSetAlgorithm():
                 if (phi_dot > 0 or (phis[i] + phi_dot) > 0):
                     unavoid_collision = True
             '''
-            #print(f"phi_dots_vanilla {phi_dots_vanilla}, phi_dots {phi_dots}")
-            #if (unavoid_collision):
-            #    print(f'collision unavoidable!!!!!!!!!!!!!!!!!!!!!!!')
             record_data['control'] = u
             record_data['is_safe_control'] = True
             #self.records.append(record_data)
@@ -239,9 +225,8 @@ class SafeSetAlgorithm():
         return np.arccos(angle)
 
     def solve_qp(self, robot_state, u0, L_gs, reference_control_laws, phis, qp_parameter, danger_indexs, warning_indexs):
-        #print(f"qp_parameter {qp_parameter}")
         q = qp_parameter
-        Q = cvxopt.matrix(q) # 
+        Q = cvxopt.matrix(q)
         u_prime = -u0
         u_prime = qp_parameter @ u_prime
         p = cvxopt.matrix(u_prime) #-u0
@@ -297,7 +282,6 @@ class SafeSetAlgorithm():
         R_inv = np.linalg.pinv(R)
         Omega = np.array([[eigenvalues[0], 0], [0, eigenvalues[1]]])
         qp = R @ Omega @ R_inv
-        #print(f"qp {qp}")
         return qp
 
     def find_eigenvector(self, robot_state, obs_poses):
@@ -321,8 +305,6 @@ class SafeSetAlgorithm():
             min_dis_theta = theta1
         lambda1 = [np.cos(max_dis_theta), np.sin(max_dis_theta)]
         lambda2 = [np.cos(min_dis_theta), np.sin(min_dis_theta)]
-        #print(f"lambda1 {lambda1}")
-        #print(f"lambda2 {lambda2}")
         return [lambda1, lambda2], max_dis_theta, min_dis_theta
 
     def find_eigenvalue(self, obs_poses, max_dis_theta, min_dis_theta):
@@ -335,6 +317,4 @@ class SafeSetAlgorithm():
         for x, y in zip(xs, ys):
             max_dis += (-np.sin(max_dis_theta)*x + np.cos(max_dis_theta)*y)**2
             min_dis += (-np.sin(min_dis_theta)*x + np.cos(min_dis_theta)*y)**2
-        #print(f"max_dis {max_dis}, min_dis {min_dis}")
-        #会不会max方向的特征向量太大了?检查一下这到底是哪个方向, 是垂直还是平行
         return [min_dis*1e5, max_dis*1e5]
