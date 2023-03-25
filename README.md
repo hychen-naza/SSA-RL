@@ -17,7 +17,7 @@ For efficiency, there are more strategies you can choose:
 
 The video result is shown below
 
-<img src="docs/SSA_RL.gif" width="600" height="700">
+<img src="docs/SSA_RL.gif" width="500" height="600">
 
 ## Install
 
