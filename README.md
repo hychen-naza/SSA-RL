@@ -16,7 +16,7 @@ For efficiency, there are more strategies you can choose:
 3, Learning from SSA;  
 
 The video result is shown below
-<video src="docs/SSA_RL.mp4"></video>
+![demo](docs/SSA_RL.gif)
 
 ## Install
 
