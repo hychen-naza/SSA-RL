@@ -1,4 +1,4 @@
-# Safe-and-Sample-efficient-Reinforcement-Learning-for-Clustered-Dynamic-Uncertain-Environments
+# Safe and Sample efficient Reinforcement Learning for Clustered Dynamic Uncertain Environments
 
 ## Table of Contents
 - [Introduction](#Introduction)
@@ -15,13 +15,9 @@ For efficiency, there are more strategies you can choose:
 2, Exploration (PSN, RND, None);  
 3, Learning from SSA;  
 
-The safety and efficiency results of all models are shown below
-![safety_result](docs/safety_result.png)
-![efficiency_result](docs/efficiency_result.png)
+The video result is shown below, agent is trained to drive to the goal while avoiding dynamic obstacles. The red means SSA is triggered.
 
-We also provide visual tools.
-![visulization](docs/visualization.png)
-
+<img src="docs/SSA_RL.gif" width="400" height="460">
 
 ## Install
 
