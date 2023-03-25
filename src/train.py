@@ -98,7 +98,8 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
     nearest_obstacle_state_size = 2 #(delta_x, delta_y)
     state_dim = robot_state_size + nearest_obstacle_state_size
     env = simu_env.Env(display, **(env_params))
-
+    sensing_range = env.min_dist * 6
+    
     policy_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = robot_action_size, max_size=int(1e6))
     policy = TD3(state_dim, robot_action_size, env.max_acc, env.max_acc, exploration = exploration)
     ssa_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = robot_action_size, max_size=int(1e6))
@@ -152,7 +153,7 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
       original_action = action
       env.display_start()
       # ssa parameters
-      unsafe_obstacle_ids, unsafe_obstacles = env.find_unsafe_obstacles(env.min_dist * 6)
+      unsafe_obstacle_ids, unsafe_obstacles = env.find_unsafe_obstacles(sensing_range)
       #safe_action = cautious_control(env.field, env.robot_state, unsafe_obstacle_ids, unsafe_obstacles, env.cur_step, env.min_dist)
       #action, is_safe = cbf_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
       #action, is_safe = shield_controller.probshield_control(state[:4], unsafe_obstacles, fx, gx, action, env.field, unsafe_obstacle_ids, unsafe_obstacles, env.cur_step)
