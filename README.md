@@ -17,7 +17,7 @@ For efficiency, there are more strategies you can choose:
 
 The video result is shown below, the agent can successfully reach the goal while avoiding dynamic obstacles. The red means SSA is triggered.
 
-<img src="docs/SSA_RL.gif" width="400" height="500">
+<img src="docs/SSA_RL.gif" width="350" height="460">
 
 ## Install
 
