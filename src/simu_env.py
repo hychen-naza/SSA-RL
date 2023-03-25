@@ -143,9 +143,6 @@ class Env(object):
 			done = True
 			reward = 2000
 			arrive = True
-		#elif not self.in_bounds.contains( (cx,cy) ):
-		#	done = True
-		#	reward = -1000
 		elif self.cur_step > self.nsteps:
 			done = True
 			reward = 0
@@ -153,7 +150,7 @@ class Env(object):
 			# rewards depend on current state
 			relative_dist = np.sqrt(relative_pos[0]**2 + relative_pos[1]**2)
 			reward = 0 #(cy+1) - min((0.1 / relative_dist), 1)
-			reward_wo_cost = 0 #(cy+1)
+			reward_wo_cost = 0 
 		info = {'arrive':arrive, 'reward_wo_cost':reward_wo_cost}
 		return np.array(next_state), reward, done, info
 
@@ -162,33 +159,6 @@ class Env(object):
 		dv_y = (2 * random.random() - 1) * self.max_acc
 		return [dv_x, dv_y]
 
-	def suboptimal_control(self):
-		# find path for unsafe obstacles
-		unsafe_obstacle_ids, unsafe_obstacle_info = self.find_unsafe_obstacles(self.min_dist * 10)
-		obstacle_paths = []
-		for id in unsafe_obstacle_ids:
-			obstacle_path = []
-			obstacle = self.field.obstacles[id]
-			for i in range(1, self.forecast_steps+1):
-				obstacle_path.append([obstacle.x(self.cur_step+i), obstacle.y(self.cur_step+i)])
-			obstacle_paths.append(obstacle_path)
-		# find possible paths for vehicle
-		possible_ax = [-0.005, -0.0025, -0.001, 0.001, 0.0025, 0.005] 
-		possible_ay = [-0.005, -0.0025, -0.001, 0.001, 0.0025, 0.005] 
-		scores = {}
-		for ax in possible_ax:
-			for ay in possible_ay:
-				vehicle_path = []
-				vx = min(self.robot_state.v_x + ax, self.robot_state.max_speed)
-				vy = min(self.robot_state.v_y + ay, self.robot_state.max_speed)
-				for i in range(1, self.forecast_steps+1):
-					vehicle_path.append([self.robot_state.x+vx*i, self.robot_state.y+vy*i])
-				# score vehicle paths and find the path with highest score
-				scores[(ax, ay)] = self.score_path(vehicle_path, obstacle_paths, vy)
-				scores[(ax, ay)] += 10*vy
-				
-		best_ax, best_ay = max(scores, key = scores.get)
-		return [best_ax, best_ay]
 
 	def score_path(self, vehicle_path, obstacle_paths, vy):
 		score = 0
