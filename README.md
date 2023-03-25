@@ -15,12 +15,8 @@ For efficiency, there are more strategies you can choose:
 2, Exploration (PSN, RND, None);  
 3, Learning from SSA;  
 
-The safety and efficiency results of all models are shown below
-![safety_result](docs/safety_result.png)
-![efficiency_result](docs/efficiency_result.png)
-
-We also provide visual tools.
-![visulization](docs/visualization.png)
+The video result is shown below
+![safety_result](docs/SSA_RL.mp4)
 
 
 ## Install
