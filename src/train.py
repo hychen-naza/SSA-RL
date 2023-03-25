@@ -34,16 +34,11 @@ import param
 from turtle_display import TurtleRunnerDisplay
 from utils import ReplayBuffer
 from td3 import TD3
-#from pe_model import PE
-#from fake_env import FakeEnv
 from ssa import SafeSetAlgorithm
 from cautious_rl import ProbabiilisticShield
 from cbf import ControlBarrierFunction
-'''
-random.seed(1)
-np.random.seed(1)
-tf.random.set_seed(1)
-'''
+
+
 class RND(keras.Model):
     '''
         RND
@@ -113,13 +108,10 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
     robot_action_size = 2
     nearest_obstacle_state_size = 2 #(delta_x, delta_y)
     state_dim = robot_state_size + nearest_obstacle_state_size
-
-    model_update_freq = 1000
     env = simu_env.Env(display, **(env_params))
 
     policy_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = robot_action_size, max_size=int(1e6))
     policy = TD3(state_dim, robot_action_size, env.max_acc, env.max_acc, exploration = exploration)
-    #policy.load("./model/ssa1")
     ssa_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = robot_action_size, max_size=int(1e6))
     # ssa
     safe_controller = SafeSetAlgorithm(max_speed = env.robot_state.max_speed, is_qp = qp)
@@ -176,7 +168,7 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
       #action, is_safe = cbf_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
       #action, is_safe = shield_controller.probshield_control(state[:4], unsafe_obstacles, fx, gx, action, env.field, unsafe_obstacle_ids, unsafe_obstacles, env.cur_step)
       action, is_safe, is_unavoidable, danger_obs = safe_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
-      #is_safe = False
+
       # take safe action
       s_new, reward, done, info = env.step(action, is_safe, unsafe_obstacle_ids) 
       original_reward = reward
@@ -211,12 +203,7 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
         policy.train_on_batch(state_batch, action_batch, next_state_batch, reward_batch, not_done_batch)
 
       if (done and original_reward == -500):          
-        #print(safe_controller.records) 
         collision_num += 1      
-        # plot control half-space
-        #    state[:4], unsafe_obstacles, fx, gx, action
-        #safe_controller.plot_control_subspace(old_state[:4], unsafe_obstacles, fx, gx, original_action)
-        #break
       elif (done and original_reward == 2000):
         success_num += 1
       elif (done):
@@ -285,5 +272,4 @@ if __name__ == '__main__':
       for j, n in enumerate(reward_records):
         all_reward_records[j].append(n)
       print(all_reward_records)
-    #np.save('plot_result/ssa_rl.npy', np.array(all_reward_records))
 

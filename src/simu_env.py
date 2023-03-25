@@ -186,18 +186,8 @@ class Env(object):
 				# score vehicle paths and find the path with highest score
 				scores[(ax, ay)] = self.score_path(vehicle_path, obstacle_paths, vy)
 				scores[(ax, ay)] += 10*vy
-				'''
-				if (self.fake_env.model.reward_mse < 1e-3):
-					robot_state = np.array([self.robot_state.x, self.robot_state.y, self.robot_state.v_x, self.robot_state.v_y])
-					action = np.array([ax, ay])
-					# _, reward, _ = self.fake_env.step(robot_state, action)
-					#print(f"action {action}, scores {scores[(ax, ay)]}, reward {reward[0]}, obstacle_paths {len(obstacle_paths)}")
-					scores[(ax, ay)] += 10*vy#10*reward[0]
-				'''
 				
 		best_ax, best_ay = max(scores, key = scores.get)
-		#if (self.fake_env.model.reward_mse < 1e-3):
-		#	print(f"pick action [{best_ax}, {best_ay}]")
 		return [best_ax, best_ay]
 
 	def score_path(self, vehicle_path, obstacle_paths, vy):
@@ -210,8 +200,6 @@ class Env(object):
 				score += distance
 				if (distance < self.min_dist * 3):
 					score += -3*distance
-		# print(f"score {score}, vy {vy}")
-		#score += vy * 8
 		return score 
 
 	def find_unsafe_obstacles(self, min_dist):

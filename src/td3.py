@@ -9,7 +9,7 @@ import random
 
 class Actor(keras.Model):
     '''
-        The actor in TD3. Architecture from authors of TD3
+        The actor in TD3. 
     '''
     def __init__(self, action_dim, max_action):
         super().__init__()
@@ -31,8 +31,7 @@ class Actor(keras.Model):
 
 class Critic(keras.Model):
     '''
-        The critics in TD3. Architecture from authors of TD3
-        We organize both critics within the same keras.Model
+        The critics in TD3. 
     '''
     def __init__(self):
         super().__init__()
@@ -163,7 +162,6 @@ class TD3():
             next_state: tf tensor, size (batch_size, state_dim)
             reward: tf tensor, size (batch_size, 1)
             not_done: tf tensor, size (batch_size, 1)
-            You need to implement part of this function.
         '''
         # Select action according to policy and add clipped noise
         noise = tf.clip_by_value(tf.random.normal(action.shape) * self.policy_noise,
@@ -176,8 +174,6 @@ class TD3():
         q1 = q1.numpy()
         q2 = q2.numpy()
 
-        #q1[not_done == 0] = 0
-        #q2[not_done == 0] = 0
         target_Q = reward + self.discount * np.minimum(q1, q2) 
     
         with tf.GradientTape() as tape:
@@ -221,7 +217,6 @@ class TD3():
     def save(self, filename):
         '''
             Saves current weight of actor and critic. You may use this function for debugging.
-            Do not modify.
         '''
         self.critic.save_weights(filename + "_critic")
         self.actor.save_weights(filename + "_actor")

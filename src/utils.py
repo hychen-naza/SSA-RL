@@ -1,7 +1,6 @@
 '''
     Custom Replay buffer for MBPO
 '''
-# pylint: disable=R0902, R0913
 import numpy as np
 import tensorflow as tf
 
