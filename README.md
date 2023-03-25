@@ -16,7 +16,7 @@ For efficiency, there are more strategies you can choose:
 3, Learning from SSA;  
 
 The video result is shown below
-<img src="docs/SSA_RL.gif" width="100" height="100">
+<img src="docs/SSA_RL.gif" width="400" height="600">
 
 ## Install
 
