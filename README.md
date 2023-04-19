@@ -46,6 +46,7 @@ python train.py --display {none, turtle} --explore {none, psn, rnd} --no-qp --ss
 - `--no-ssa-buffer` means that we use the default learning.
 - `--ssa-buffer` means that we use the safe learning from SSA demonstrations.
 
+You may also try to test other safe controller (CBF, Shield) by uncommenting line 108-109 and 155-157.
 
 ## Acknowledgments
 Part of the simulation environment code is coming from the course CS 7638: Artificial Intelligence for Robotics in GaTech. We get the permission from the lecturor Jay Summet to use this code for research.
