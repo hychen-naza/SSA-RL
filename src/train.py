@@ -105,15 +105,13 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
     ssa_replay_buffer = ReplayBuffer(state_dim = state_dim, action_dim = robot_action_size, max_size=int(1e6))
     # ssa
     safe_controller = SafeSetAlgorithm(max_speed = env.robot_state.max_speed, is_qp = qp)
-    cbf_controller = ControlBarrierFunction(max_speed = env.robot_state.max_speed)
-    shield_controller = ProbabiilisticShield(max_speed = env.robot_state.max_speed)
+    #cbf_controller = ControlBarrierFunction(max_speed = env.robot_state.max_speed)
+    #shield_controller = ProbabiilisticShield(max_speed = env.robot_state.max_speed)
+    
     # parameters
     max_steps = int(1e6)
-    start_timesteps = 2e3
     episode_reward = 0
     episode_num = 0
-    last_episode_reward = 0
-    teacher_forcing_rate = 0
     total_rewards = []
     total_steps = 0
     # dynamic model parameters
@@ -157,7 +155,7 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
       #safe_action = cautious_control(env.field, env.robot_state, unsafe_obstacle_ids, unsafe_obstacles, env.cur_step, env.min_dist)
       #action, is_safe = cbf_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
       #action, is_safe = shield_controller.probshield_control(state[:4], unsafe_obstacles, fx, gx, action, env.field, unsafe_obstacle_ids, unsafe_obstacles, env.cur_step)
-      action, is_safe, is_unavoidable, danger_obs = safe_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
+      action, is_safe = safe_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
 
       # take safe action
       s_new, reward, done, info = env.step(action, is_safe, unsafe_obstacle_ids) 
@@ -180,7 +178,6 @@ def main(display_name, exploration, qp, enable_ssa_buffer):
           policy_replay_buffer.add(state, action, s_new, reward, done)
       else:
         policy_replay_buffer.add(state, original_action, s_new, reward, done)
-      old_state = state
       state = s_new
       
       # train policy
@@ -241,7 +238,7 @@ def eval(policy, env, safe_controller, fx, gx):
   while (True):
     action = policy.select_action(state)  
     unsafe_obstacle_ids, unsafe_obstacles = env.find_unsafe_obstacles(env.min_dist * 6)
-    action, _, _,_ = safe_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
+    action, _ = safe_controller.get_safe_control(state[:4], unsafe_obstacles, fx, gx, action)
     s_new, reward, done, info = env.step(action)
     episode_reward += reward
     state = s_new
@@ -251,15 +248,9 @@ def eval(policy, env, safe_controller, fx, gx):
 
 if __name__ == '__main__':
     args = parser().parse_args()
-    all_reward_records = []
-    for i in range(100):
-      all_reward_records.append([])
-    for i in range(1):
-      reward_records = main(display_name = args.display, 
-          exploration = args.explore,
-          qp = args.is_qp,
-          enable_ssa_buffer = args.enable_ssa_buffer)
-      for j, n in enumerate(reward_records):
-        all_reward_records[j].append(n)
-      print(all_reward_records)
+    reward_records = main(display_name = args.display, 
+        exploration = args.explore,
+        qp = args.is_qp,
+        enable_ssa_buffer = args.enable_ssa_buffer)
+
 

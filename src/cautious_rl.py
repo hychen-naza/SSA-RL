@@ -18,7 +18,6 @@ class ProbabiilisticShield():
 
 	def probshield_control(self, robot_state, obs_states, f, g, u0, field, unsafe_obstacle_ids, unsafe_obstacles, cur_step):
 		# find path for unsafe obstacles
-		#forecast_steps = 
 		u0 = np.array(u0).reshape((2,1))
 		is_safe = True
 		for i, obs_state in enumerate(obs_states):
@@ -53,8 +52,6 @@ class ProbabiilisticShield():
 					# score vehicle paths and find the path with highest score
 					scores[(ax, ay)] = self.score_path(vehicle_path, obstacle_paths, vy)					
 			best_ax, best_ay = max(scores, key = scores.get)
-			#import pdb
-			#pdb.set_trace()
 			return np.array([best_ax, best_ay]), True
 		else:
 			u0 = u0.reshape(1,2)
