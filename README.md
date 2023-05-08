@@ -19,6 +19,20 @@ The video result is shown below, agent is trained to drive to the goal while avo
 
 <img src="docs/SSA_RL.gif" width="400" height="460">
 
+Please cite our paper as:
+
+```
+@article{chen2021safe,
+  title={Safe and sample-efficient reinforcement learning for clustered dynamic environments},
+  author={Chen, Hongyi and Liu, Changliu},
+  journal={IEEE Control Systems Letters},
+  volume={6},
+  pages={1928--1933},
+  year={2021},
+  publisher={IEEE}
+}
+```
+
 ## Install
 
 ```
